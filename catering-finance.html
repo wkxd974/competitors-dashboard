@@ -262,29 +262,12 @@ const data = {
     { name:'瑞幸', cat:'咖啡茶饮', revenue:365.11, revGrowth:0.469, profit:30.82, profGrowth:0.474, gross:0.625, net:0.08442, sssg:'自营Q3: +14.4%' },
     { name:'霸王茶姬', cat:'咖啡茶饮', revenue:99.33, revGrowth:0.095, profit:11.52, profGrowth:-0.384, gross:0.536, net:0.11602, sssg:'Q3: -27.8%' },
     { name:'老乡鸡', cat:'综合餐饮', revenue:45.78, revGrowth:null, profit:3.71, profGrowth:null, gross:0.246, net:0.08112, sssg:null },
-  ],
-  'FY': [
-    { name:'海底捞', cat:'火锅', revenue:432.25, revGrowth:0.011, profit:40.42, profGrowth:-0.140, gross:0.681, net:0.09351, sssg:'-6.7%' },
-    { name:'百胜中国', cat:'综合餐饮', revenue:848.30, revGrowth:0.040, profit:66.89, profGrowth:0.020, gross:0.689, net:0.079, sssg:'KFC +1%; 必胜客 +1%' },
-    { name:'遇见小面', cat:'综合餐饮', revenue:16.22, revGrowth:0.405, profit:1.06, profGrowth:0.748, gross:0.676, net:0.065, sssg:'+1.0%' },
-    { name:'九毛九', cat:'综合餐饮', revenue:52.33, revGrowth:-0.138, profit:0.58, profGrowth:0.043, gross:0.645, net:0.011, sssg:'太二：-11.5%\n怂火锅：-16.5%' },
-    { name:'呷哺呷哺', cat:'火锅', revenue:37.89, revGrowth:-0.203, profit:-2.96, profGrowth:-0.256, gross:0.650, net:-0.07812, sssg:'-9.6%' },
-    { name:'绿茶', cat:'综合餐饮', revenue:47.63, revGrowth:0.241, profit:5.09, profGrowth:0.410, gross:0.683, net:0.10687, sssg:'-0.8%' },
-    { name:'达势股份', cat:'西式快餐', revenue:53.82, revGrowth:0.248, profit:1.42, profGrowth:1.571, gross:0.727, net:0.026, sssg:'-1.5%' },
-    { name:'小菜园', cat:'综合餐饮', revenue:53.45, revGrowth:0.026, profit:7.15, profGrowth:0.232, gross:0.704, net:0.13377, sssg:'-9.4%' },
-    { name:'瑞幸', cat:'咖啡茶饮', revenue:492.88, revGrowth:0.430, profit:36.05, profGrowth:0.229, gross:0.600, net:0.07314, sssg:'自营店 +7.5%' },
-    { name:'蜜雪冰城', cat:'咖啡茶饮', revenue:335.60, revGrowth:0.352, profit:59.27, profGrowth:0.270, gross:0.311, net:0.17661, sssg:null },
-    { name:'奈雪的茶', cat:'咖啡茶饮', revenue:43.31, revGrowth:-0.120, profit:-3.34, profGrowth:null, gross:0.660, net:-0.07712, sssg:'直营 +5.5%' },
-    { name:'霸王茶姬', cat:'咖啡茶饮', revenue:129.10, revGrowth:0.040, profit:19.10, profGrowth:-0.240, gross:0.535, net:0.14795, sssg:'Q4: -25.5%' },
-    { name:'沪上阿姨', cat:'咖啡茶饮', revenue:44.66, revGrowth:0.360, profit:8.21, profGrowth:0.524, gross:0.314, net:0.18383, sssg:null },
-    { name:'茶百道', cat:'咖啡茶饮', revenue:53.95, revGrowth:0.097, profit:8.21, profGrowth:0.712, gross:0.325, net:0.15218, sssg:null },
-    { name:'古茗', cat:'咖啡茶饮', revenue:129.14, revGrowth:0.469, profit:31.10, profGrowth:1.083, gross:0.330, net:0.24082, sssg:null },
   ]
 };
 
-const periodLabels = { 'H1':'2025年H1（半年报）', 'Q3':'2025年Q1-Q3（前三季度）', 'FY':'2025全年（盈利预测）' };
+const periodLabels = { 'H1':'2025年H1（半年报）', 'Q3':'2025年Q1-Q3（前三季度）' };
 
-let currentPeriod = 'FY';
+let currentPeriod = 'H1';
 let currentCategory = '全部';
 let currentSort = 'revenue_desc';
 let charts = {};
