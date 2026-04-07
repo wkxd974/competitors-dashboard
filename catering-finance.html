@@ -6,435 +6,499 @@
 <title>全球餐饮可比上市公司看板</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-  :root {
-    --bg: #0f1117;
-    --card: #1a1d2e;
-    --card-hover: #222640;
-    --border: #2a2e45;
-    --text: #e4e6f0;
-    --text-dim: #8b8fa3;
-    --accent: #6366f1;
-    --accent2: #818cf8;
-    --green: #22c55e;
-    --red: #ef4444;
-    --orange: #f59e0b;
-    --cyan: #06b6d4;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-    background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh;
-  }
-  .header {
-    text-align: center; padding: 48px 20px 24px;
-    background: linear-gradient(180deg, #1a1040 0%, var(--bg) 100%);
-  }
-  .header h1 {
-    font-size: 2rem; font-weight: 700;
-    background: linear-gradient(135deg, #818cf8, #c084fc, #f472b6);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;
-  }
-  .header p { color: var(--text-dim); font-size: 0.95rem; }
-  .container { max-width: 1440px; margin: 0 auto; padding: 0 24px 60px; }
+:root {
+  --bg: #0f1117; --card: #1a1d2e; --card-hover: #222640; --border: #2a2e45;
+  --text: #e4e6f0; --text-dim: #8b8fa3; --accent: #6366f1; --accent2: #818cf8;
+  --green: #22c55e; --red: #ef4444; --orange: #f59e0b; --cyan: #06b6d4;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+a { color:var(--accent2); text-decoration:none; }
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
 
-  /* Filter pills */
-  .filter-section { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 20px 0 8px; }
-  .filter-section .label { font-size: 0.8rem; color: var(--text-dim); margin-right: 4px; align-self: center; }
-  .cat-pill {
-    padding: 5px 16px; border-radius: 20px; border: 1px solid var(--border);
-    background: transparent; color: var(--text-dim); cursor: pointer;
-    font-size: 0.82rem; transition: all .2s;
-  }
-  .cat-pill:hover { border-color: var(--accent); color: var(--text); }
-  .cat-pill.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+/* Layout */
+.app { display:flex; height:100vh; }
+.sidebar { width:260px; min-width:260px; background:var(--card); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
+.sidebar-header { padding:20px 16px 12px; border-bottom:1px solid var(--border); }
+.sidebar-header h1 { font-size:1.1rem; font-weight:700; background:linear-gradient(135deg,#818cf8,#c084fc,#f472b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.sidebar-header p { font-size:0.72rem; color:var(--text-dim); margin-top:2px; }
+.sidebar-nav { flex:1; overflow-y:auto; padding:8px 0; }
+.nav-group { margin-bottom:4px; }
+.nav-group-title { padding:8px 16px 4px; font-size:0.7rem; font-weight:700; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px; display:flex; align-items:center; gap:6px; }
+.nav-group-title .flag { font-size:0.85rem; }
+.nav-item { padding:7px 16px 7px 28px; font-size:0.82rem; color:var(--text-dim); cursor:pointer; transition:all .15s; border-left:3px solid transparent; }
+.nav-item:hover { background:var(--card-hover); color:var(--text); }
+.nav-item.active { background:rgba(99,102,241,.12); color:var(--accent2); border-left-color:var(--accent); font-weight:600; }
+.nav-item .cat-tag { font-size:0.62rem; padding:1px 5px; border-radius:8px; background:rgba(99,102,241,.1); color:var(--accent2); margin-left:4px; }
+.nav-summary { padding:7px 16px 7px 16px; font-size:0.82rem; color:var(--orange); cursor:pointer; transition:all .15s; border-left:3px solid transparent; font-weight:600; }
+.nav-summary:hover { background:var(--card-hover); }
+.nav-summary.active { background:rgba(245,158,11,.1); border-left-color:var(--orange); }
 
-  /* Tabs */
-  .tabs {
-    display: flex; justify-content: center; gap: 4px; margin: 20px 0 28px;
-    background: var(--card); border-radius: 12px; padding: 4px; width: fit-content;
-    margin-left: auto; margin-right: auto;
-  }
-  .tab {
-    padding: 10px 24px; border-radius: 10px; cursor: pointer;
-    font-size: 0.9rem; color: var(--text-dim); transition: all .2s;
-    border: none; background: transparent;
-  }
-  .tab:hover { color: var(--text); }
-  .tab.active { background: var(--accent); color: #fff; font-weight: 600; }
+/* Main content */
+.main { flex:1; overflow-y:auto; padding:0; }
+.main-header { padding:20px 28px 0; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+.main-title { font-size:1.4rem; font-weight:700; }
+.main-subtitle { font-size:0.8rem; color:var(--text-dim); }
 
-  /* Sort bar */
-  .sort-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
-  .sort-bar label { color: var(--text-dim); font-size: 0.85rem; }
-  .sort-bar select {
-    background: var(--card); color: var(--text); border: 1px solid var(--border);
-    border-radius: 8px; padding: 6px 12px; font-size: 0.85rem; cursor: pointer;
-  }
+/* Period filter */
+.period-filter { display:flex; gap:4px; padding:12px 28px; flex-wrap:wrap; }
+.period-btn { padding:5px 14px; border-radius:8px; border:1px solid var(--border); background:transparent; color:var(--text-dim); cursor:pointer; font-size:0.78rem; transition:all .2s; }
+.period-btn:hover { border-color:var(--accent); color:var(--text); }
+.period-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600; }
 
-  /* KPI */
-  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
-  .kpi-card { background: var(--card); border-radius: 14px; padding: 18px; border: 1px solid var(--border); }
-  .kpi-card .label { font-size: 0.78rem; color: var(--text-dim); margin-bottom: 4px; }
-  .kpi-card .value { font-size: 1.5rem; font-weight: 700; }
+/* KPI cards */
+.kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; padding:12px 28px; }
+.kpi-card { background:var(--card); border-radius:12px; padding:14px; border:1px solid var(--border); }
+.kpi-card .kpi-label { font-size:0.72rem; color:var(--text-dim); }
+.kpi-card .kpi-value { font-size:1.3rem; font-weight:700; margin-top:2px; }
+.kpi-card .kpi-change { font-size:0.72rem; margin-top:2px; }
+.up { color:var(--green); } .down { color:var(--red); } .na { color:var(--text-dim); }
 
-  /* Company Grid */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; margin-bottom: 40px; }
-  .company-card {
-    background: var(--card); border-radius: 14px; padding: 20px;
-    border: 1px solid var(--border); transition: all .25s; cursor: default;
-  }
-  .company-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(99,102,241,.15); }
-  .company-card .name { font-size: 1.1rem; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-  .company-card .tag {
-    font-size: 0.62rem; padding: 2px 7px; border-radius: 10px;
-    background: rgba(99,102,241,.15); color: var(--accent2);
-  }
-  .region-tag {
-    font-size: 0.62rem; padding: 2px 7px; border-radius: 10px;
-  }
-  .region-CN { background: rgba(239,68,68,.12); color: #fca5a5; }
-  .region-US { background: rgba(59,130,246,.12); color: #93c5fd; }
-  .region-JP { background: rgba(234,179,8,.12); color: #fde047; }
-  .region-CA { background: rgba(34,197,94,.12); color: #86efac; }
-  .company-card .metrics { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-  .metric .mlabel { font-size: 0.72rem; color: var(--text-dim); }
-  .metric .mval { font-size: 0.98rem; font-weight: 600; }
-  .metric .mchange { font-size: 0.72rem; margin-left: 3px; }
-  .up { color: var(--green); } .down { color: var(--red); } .na { color: var(--text-dim); }
-  .sssg-row { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
-  .sssg-row .mlabel { font-size: 0.72rem; color: var(--text-dim); }
-  .sssg-row .sssg-text { font-size: 0.8rem; color: var(--text); margin-top: 2px; }
+/* Data table */
+.data-section { padding:12px 28px 40px; }
+.data-section h2 { font-size:1rem; font-weight:600; margin-bottom:10px; color:var(--text-dim); }
+.table-wrap { overflow-x:auto; border-radius:12px; border:1px solid var(--border); max-height:65vh; overflow-y:auto; }
+table { width:100%; border-collapse:collapse; font-size:0.78rem; }
+th,td { padding:7px 10px; text-align:right; white-space:nowrap; }
+th { background:#1e2138; color:var(--text-dim); font-weight:600; position:sticky; top:0; z-index:2; }
+td { border-top:1px solid var(--border); }
+th:first-child,td:first-child { text-align:left; position:sticky; left:0; z-index:1; min-width:180px; max-width:280px; white-space:normal; }
+th:first-child { z-index:3; background:#1e2138; }
+td:first-child { background:var(--card); }
+tr:hover td { background:var(--card-hover); }
+tr:hover td:first-child { background:var(--card-hover); }
+tr.section-row td { font-weight:700; color:var(--accent2); background:rgba(99,102,241,.06); }
+tr.section-row td:first-child { background:rgba(99,102,241,.06); }
+tr.indent-2 td:first-child { padding-left:24px; }
+tr.indent-3 td:first-child { padding-left:40px; }
+tr.indent-4 td:first-child { padding-left:56px; }
 
-  /* Charts */
-  .charts-section { margin-top: 20px; }
-  .charts-section h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 16px; }
-  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; }
-  .chart-box { background: var(--card); border-radius: 14px; padding: 20px; border: 1px solid var(--border); }
-  .chart-box h3 { font-size: 0.95rem; color: var(--text-dim); margin-bottom: 12px; }
-  @media (max-width: 900px) { .chart-grid { grid-template-columns: 1fr; } }
-  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } .header h1 { font-size: 1.4rem; } .tabs { flex-wrap: wrap; } }
+/* Charts */
+.charts-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; padding:0 28px 20px; }
+.chart-box { background:var(--card); border-radius:12px; padding:16px; border:1px solid var(--border); }
+.chart-box h3 { font-size:0.85rem; color:var(--text-dim); margin-bottom:10px; }
 
-  /* Table */
-  .table-wrap { overflow-x: auto; margin-bottom: 40px; border-radius: 14px; border: 1px solid var(--border); }
-  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-  th, td { padding: 9px 12px; text-align: right; white-space: nowrap; }
-  th { background: #1e2138; color: var(--text-dim); font-weight: 600; position: sticky; top: 0; }
-  td { border-top: 1px solid var(--border); }
-  th:first-child, td:first-child { text-align: left; position: sticky; left: 0; background: var(--card); z-index: 1; }
-  tr:hover td { background: var(--card-hover); }
-  tr:hover td:first-child { background: var(--card-hover); }
+/* Country summary */
+.summary-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px; padding:0 28px 28px; }
+.summary-card { background:var(--card); border-radius:12px; padding:16px; border:1px solid var(--border); cursor:pointer; transition:all .2s; }
+.summary-card:hover { border-color:var(--accent); transform:translateY(-1px); }
+.summary-card .sc-name { font-size:1rem; font-weight:700; margin-bottom:2px; }
+.summary-card .sc-cat { font-size:0.7rem; color:var(--accent2); }
+.summary-card .sc-metrics { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:10px; }
+.summary-card .sc-m {}
+.summary-card .sc-ml { font-size:0.68rem; color:var(--text-dim); }
+.summary-card .sc-mv { font-size:0.9rem; font-weight:600; }
 
-  /* View Toggle */
-  .view-toggle { display: flex; gap: 4px; background: var(--card); border-radius: 10px; padding: 3px; }
-  .view-btn { padding: 6px 16px; border-radius: 8px; border: none; background: transparent; color: var(--text-dim); cursor: pointer; font-size: 0.82rem; transition: all .2s; }
-  .view-btn.active { background: var(--accent); color: #fff; }
-  #cardView, #tableView { display: none; }
-  #cardView.show, #tableView.show { display: block; }
-  .hidden { display: none !important; }
+/* Loading */
+.loading { display:flex; align-items:center; justify-content:center; height:100vh; flex-direction:column; gap:12px; }
+.loading .spinner { width:40px; height:40px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+@media (max-width:900px) {
+  .sidebar { width:200px; min-width:200px; }
+  .charts-row { grid-template-columns:1fr; }
+}
+@media (max-width:600px) {
+  .app { flex-direction:column; }
+  .sidebar { width:100%; min-width:100%; height:auto; max-height:40vh; }
+  .charts-row { grid-template-columns:1fr; }
+}
 </style>
 </head>
 <body>
-
-<div class="header">
-  <h1>全球餐饮可比上市公司看板</h1>
-  <p>2025年度各报告期核心财务与经营数据 · 中国 / 美国 / 日本 / 加拿大</p>
-</div>
-
-<div class="container">
-  <!-- Region Filter -->
-  <div class="filter-section" id="regionBar"></div>
-  <!-- Category Filter -->
-  <div class="filter-section" id="categoryBar"></div>
-  <!-- Period Tabs -->
-  <div class="tabs" id="periodTabs"></div>
-  <!-- KPI Summary -->
-  <div class="kpi-row" id="kpiRow"></div>
-  <!-- Sort + View -->
-  <div class="sort-bar">
-    <div style="display:flex;gap:12px;align-items:center">
-      <label>排序：</label>
-      <select id="sortSelect">
-        <option value="revenue_desc">营收 高→低</option>
-        <option value="revenue_asc">营收 低→高</option>
-        <option value="profit_desc">净利润 高→低</option>
-        <option value="profit_asc">净利润 低→高</option>
-        <option value="margin_desc">净利率 高→低</option>
-        <option value="margin_asc">净利率 低→高</option>
-      </select>
-    </div>
-    <div class="view-toggle">
-      <button class="view-btn active" data-view="card">卡片</button>
-      <button class="view-btn" data-view="table">表格</button>
-    </div>
-  </div>
-  <div id="cardView" class="show"><div class="grid" id="companyGrid"></div></div>
-  <div id="tableView"><div class="table-wrap"><table id="dataTable"></table></div></div>
-  <div class="charts-section">
-    <h2>可视化对比</h2>
-    <div class="chart-grid">
-      <div class="chart-box"><h3>营业收入</h3><canvas id="chartRevenue"></canvas></div>
-      <div class="chart-box"><h3>净利润</h3><canvas id="chartProfit"></canvas></div>
-      <div class="chart-box"><h3>毛利率 (%)</h3><canvas id="chartGross"></canvas></div>
-      <div class="chart-box"><h3>净利率 (%)</h3><canvas id="chartNet"></canvas></div>
-    </div>
+<div class="app" id="app">
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div style="color:var(--text-dim);font-size:0.9rem;">加载数据中...</div>
   </div>
 </div>
 
 <script>
-const regionNames = { 'ALL':'全部', 'CN':'中国', 'US':'美国', 'JP':'日本', 'CA':'加拿大' };
-const catNames = ['全部','火锅','综合餐饮','咖啡茶饮','西式快餐','其他'];
-const currencyLabels = { 'CNY':'亿元人民币', 'USD':'百万美元', 'JPY':'亿日元' };
+const DATA_URL = 'https://utidjtbvgwxsnhjczoju.supabase.co/storage/v1/object/public/public-data/brands_data.json';
+const COUNTRY_NAMES = { CN:'中国', US:'美国', JP:'日本', CA:'加拿大' };
+const COUNTRY_FLAGS = { CN:'🇨🇳', US:'🇺🇸', JP:'🇯🇵', CA:'🇨🇦' };
+const COUNTRY_ORDER = ['CN','US','JP','CA'];
 
-const data = {
-  'H1': [
-    { name:'海底捞', cat:'火锅', region:'CN', currency:'CNY', revenue:193.33421358, revGrowth:-6.0, profit:23.5365805492, profGrowth:-10.3, gross:68.3, net:12.2, sssg:'-9.9%', stores:null, turnover:null, avgSpend:null },
-    { name:'百胜中国', cat:'西式快餐', region:'CN', currency:'CNY', revenue:412.908, revGrowth:2.8, profit:39.086, profGrowth:2.5, gross:68.9, net:9.5, sssg:null, stores:16395, turnover:null, avgSpend:null },
-    { name:'遇见小面', cat:'综合餐饮', region:'CN', currency:'CNY', revenue:7.03185, revGrowth:33.8, profit:0.4183, profGrowth:95.8, gross:68.6, net:5.9, sssg:'-3.1%', stores:null, turnover:null, avgSpend:null },
-    { name:'九毛九', cat:'综合餐饮', region:'CN', currency:'CNY', revenue:27.53436, revGrowth:-10.3, profit:0.5871, profGrowth:-13.6, gross:64.4, net:2.1, sssg:null, stores:729, turnover:null, avgSpend:null },
-    { name:'呷哺呷哺', cat:'火锅', region:'CN', currency:'CNY', revenue:19.42383, revGrowth:-19.2, profit:-0.8083, profGrowth:-70.5, gross:67.0, net:-4.2, sssg:null, stores:937, turnover:null, avgSpend:53.7 },
-    { name:'绿茶', cat:'综合餐饮', region:'CN', currency:'CNY', revenue:22.90375, revGrowth:23.1, profit:2.339, profGrowth:34.1, gross:69.7, net:10.2, sssg:'-1.7%', stores:null, turnover:3.0, avgSpend:null },
-    { name:'达势股份', cat:'西式快餐', region:'CN', currency:'CNY', revenue:25.93, revGrowth:27.0, profit:0.66, profGrowth:5.0, gross:72.7, net:2.5, sssg:'-1.0%', stores:null, turnover:null, avgSpend:null },
-    { name:'小菜园', cat:'综合餐饮', region:'CN', currency:'CNY', revenue:27.13666, revGrowth:6.5, profit:3.82397, profGrowth:35.7, gross:70.5, net:14.1, sssg:'-7.2%', stores:null, turnover:null, avgSpend:null },
-    { name:'瑞幸', cat:'咖啡茶饮', region:'CN', currency:'CNY', revenue:212.2415, revGrowth:44.6, profit:17.75602, profGrowth:125.4, gross:61.5, net:8.4, sssg:null, stores:null, turnover:null, avgSpend:null },
-    { name:'蜜雪冰城', cat:'咖啡茶饮', region:'CN', currency:'CNY', revenue:148.74809, revGrowth:39.3, profit:27.18214, profGrowth:44.1, gross:31.6, net:18.3, sssg:null, stores:null, turnover:null, avgSpend:null },
-    { name:'奈雪的茶', cat:'咖啡茶饮', region:'CN', currency:'CNY', revenue:21.77632, revGrowth:-14.4, profit:-1.19287, profGrowth:-72.9, gross:65.9, net:-5.5, sssg:null, stores:null, turnover:null, avgSpend:null },
-    { name:'霸王茶姬', cat:'咖啡茶饮', region:'CN', currency:'CNY', revenue:67.24592, revGrowth:21.6, profit:7.54555, profGrowth:-38.3, gross:53.5, net:11.2, sssg:null, stores:null, turnover:null, avgSpend:null },
-    { name:'沪上阿姨', cat:'咖啡茶饮', region:'CN', currency:'CNY', revenue:18.18461, revGrowth:9.7, profit:2.02898, profGrowth:20.9, gross:31.4, net:11.2, sssg:null, stores:null, turnover:null, avgSpend:null },
-    { name:'茶百道', cat:'咖啡茶饮', region:'CN', currency:'CNY', revenue:24.9955, revGrowth:4.3, profit:3.32913, profGrowth:39.5, gross:32.6, net:13.3, sssg:null, stores:null, turnover:null, avgSpend:null },
-    { name:'古茗', cat:'咖啡茶饮', region:'CN', currency:'CNY', revenue:56.62904, revGrowth:41.2, profit:16.26468, profGrowth:119.8, gross:31.5, net:28.7, sssg:null, stores:null, turnover:null, avgSpend:null },
-    { name:'Chipotle', cat:'西式快餐', region:'US', currency:'USD', revenue:5938.6, revGrowth:4.6, profit:822.7, profGrowth:null, gross:71.0, net:13.9, sssg:null, stores:3844, turnover:null, avgSpend:null },
-    { name:'萨莉亚', cat:'综合餐饮', region:'JP', currency:'JPY', revenue:1215.7, revGrowth:null, profit:46.7, profGrowth:null, gross:58.1, net:3.8, sssg:null, stores:1636, turnover:null, avgSpend:null }
-  ],
-  'FY': [
-    { name:'海底捞', cat:'火锅', region:'CN', currency:'CNY', revenue:432.25, revGrowth:1.1, profit:40.42, profGrowth:-14.0, gross:68.1, net:9.4, sssg:'-6.7%', stores:null, turnover:null, avgSpend:null },
-    { name:'百胜中国', cat:'西式快餐', region:'CN', currency:'CNY', revenue:848.3, revGrowth:4.0, profit:66.89, profGrowth:2.0, gross:68.9, net:7.9, sssg:null, stores:18101, turnover:null, avgSpend:null },
-    { name:'遇见小面', cat:'综合餐饮', region:'CN', currency:'CNY', revenue:16.22, revGrowth:40.5, profit:1.06, profGrowth:74.8, gross:67.6, net:6.5, sssg:'1.0%', stores:null, turnover:null, avgSpend:null },
-    { name:'九毛九', cat:'综合餐饮', region:'CN', currency:'CNY', revenue:52.33, revGrowth:-13.8, profit:0.58, profGrowth:4.3, gross:64.5, net:1.1, sssg:null, stores:644, turnover:null, avgSpend:null },
-    { name:'呷哺呷哺', cat:'火锅', region:'CN', currency:'CNY', revenue:37.89, revGrowth:-20.3, profit:-2.96, profGrowth:-25.6, gross:65.0, net:-7.8, sssg:'-9.6%', stores:957, turnover:null, avgSpend:54.8 },
-    { name:'绿茶', cat:'综合餐饮', region:'CN', currency:'CNY', revenue:47.63, revGrowth:24.1, profit:5.09, profGrowth:41.0, gross:68.3, net:10.7, sssg:'-0.8%', stores:null, turnover:3.0, avgSpend:null },
-    { name:'达势股份', cat:'西式快餐', region:'CN', currency:'CNY', revenue:53.82, revGrowth:24.8, profit:1.42, profGrowth:1.6, gross:72.7, net:2.6, sssg:'-1.5%', stores:null, turnover:null, avgSpend:null },
-    { name:'小菜园', cat:'综合餐饮', region:'CN', currency:'CNY', revenue:53.45, revGrowth:2.6, profit:7.15, profGrowth:23.2, gross:70.4, net:13.4, sssg:'-9.4%', stores:null, turnover:null, avgSpend:null },
-    { name:'瑞幸', cat:'咖啡茶饮', region:'CN', currency:'CNY', revenue:492.88, revGrowth:43.0, profit:36.05, profGrowth:22.9, gross:60.0, net:7.3, sssg:null, stores:null, turnover:null, avgSpend:null },
-    { name:'蜜雪冰城', cat:'咖啡茶饮', region:'CN', currency:'CNY', revenue:335.6, revGrowth:35.2, profit:59.27, profGrowth:27.0, gross:31.1, net:17.7, sssg:null, stores:null, turnover:null, avgSpend:null },
-    { name:'奈雪的茶', cat:'咖啡茶饮', region:'CN', currency:'CNY', revenue:43.31, revGrowth:-12.0, profit:-3.34, profGrowth:null, gross:66.0, net:-7.7, sssg:null, stores:null, turnover:null, avgSpend:null },
-    { name:'霸王茶姬', cat:'咖啡茶饮', region:'CN', currency:'CNY', revenue:129.1, revGrowth:4.0, profit:19.1, profGrowth:-24.0, gross:53.5, net:14.8, sssg:null, stores:null, turnover:null, avgSpend:null },
-    { name:'沪上阿姨', cat:'咖啡茶饮', region:'CN', currency:'CNY', revenue:44.66, revGrowth:36.0, profit:8.21, profGrowth:52.4, gross:31.4, net:18.4, sssg:null, stores:null, turnover:null, avgSpend:null },
-    { name:'茶百道', cat:'咖啡茶饮', region:'CN', currency:'CNY', revenue:53.95, revGrowth:9.7, profit:8.21, profGrowth:71.2, gross:32.5, net:15.2, sssg:null, stores:null, turnover:null, avgSpend:null },
-    { name:'古茗', cat:'咖啡茶饮', region:'CN', currency:'CNY', revenue:129.14, revGrowth:46.9, profit:31.1, profGrowth:108.3, gross:33.0, net:24.1, sssg:null, stores:null, turnover:null, avgSpend:null },
-    { name:'Chipotle', cat:'西式快餐', region:'US', currency:'USD', revenue:11925.6, revGrowth:5.4, profit:1535.8, profGrowth:null, gross:70.4, net:12.9, sssg:'-1.7%', stores:4056, turnover:null, avgSpend:null },
-    { name:'Cava', cat:'综合餐饮', region:'US', currency:'USD', revenue:963.7, revGrowth:32.2, profit:130.3, profGrowth:null, gross:70.5, net:13.5, sssg:'13.4%', stores:null, turnover:null, avgSpend:null },
-    { name:'Sweetgreen', cat:'综合餐饮', region:'US', currency:'USD', revenue:676.8, revGrowth:15.9, profit:-90.4, profGrowth:null, gross:null, net:-13.4, sssg:'6.0%', stores:246, turnover:null, avgSpend:null },
-    { name:'麦当劳', cat:'西式快餐', region:'US', currency:'USD', revenue:25920, revGrowth:null, profit:null, profGrowth:null, gross:null, net:31.7, sssg:null, stores:43477, turnover:null, avgSpend:null },
-    { name:'星巴克(全球)', cat:'咖啡茶饮', region:'US', currency:'USD', revenue:37184.4, revGrowth:2.8, profit:1856.4, profGrowth:null, gross:null, net:5.0, sssg:'-2.0%', stores:40990, turnover:null, avgSpend:null },
-    { name:'Yum! Brands', cat:'西式快餐', region:'US', currency:'USD', revenue:7549, revGrowth:null, profit:null, profGrowth:null, gross:null, net:null, sssg:null, stores:null, turnover:null, avgSpend:null },
-    { name:'Wingstop', cat:'西式快餐', region:'US', currency:'USD', revenue:625.8, revGrowth:null, profit:null, profGrowth:null, gross:null, net:null, sssg:'19.9%', stores:2563, turnover:null, avgSpend:null },
-    { name:'Kura Sushi', cat:'其他', region:'US', currency:'USD', revenue:null, revGrowth:null, profit:-1.9, profGrowth:null, gross:null, net:-0.7, sssg:'-1.3%', stores:79, turnover:null, avgSpend:null },
-    { name:'Gen Korean BBQ', cat:'其他', region:'US', currency:'USD', revenue:208.4, revGrowth:15.1, profit:4.5, profGrowth:null, gross:null, net:2.2, sssg:'-5.6%', stores:43, turnover:null, avgSpend:null },
-    { name:"Domino's", cat:'西式快餐', region:'US', currency:'USD', revenue:4706.4, revGrowth:5.1, profit:584.2, profGrowth:null, gross:null, net:12.4, sssg:'5.9%', stores:21366, turnover:null, avgSpend:null },
-    { name:'Darden', cat:'综合餐饮', region:'US', currency:'USD', revenue:12083, revGrowth:null, profit:1049.6, profGrowth:null, gross:null, net:8.7, sssg:null, stores:null, turnover:null, avgSpend:null },
-    { name:'RBI', cat:'西式快餐', region:'CA', currency:'USD', revenue:9434, revGrowth:12.2, profit:776, profGrowth:null, gross:null, net:11.4, sssg:null, stores:null, turnover:null, avgSpend:null },
-    { name:'萨莉亚', cat:'综合餐饮', region:'JP', currency:'JPY', revenue:2567.1, revGrowth:null, profit:111.6, profGrowth:null, gross:58.1, net:4.3, sssg:null, stores:1682, turnover:null, avgSpend:null },
-    { name:'Food & Life', cat:'其他', region:'JP', currency:'JPY', revenue:4295.7, revGrowth:null, profit:246.1, profGrowth:null, gross:null, net:5.7, sssg:'10.1%', stores:null, turnover:null, avgSpend:null },
-    { name:'Colowide', cat:'综合餐饮', region:'JP', currency:'JPY', revenue:2691.6, revGrowth:11.6, profit:22.6, profGrowth:null, gross:58.2, net:0.8, sssg:null, stores:null, turnover:null, avgSpend:null },
-    { name:'Skylark', cat:'综合餐饮', region:'JP', currency:'JPY', revenue:4011.3, revGrowth:null, profit:139.7, profGrowth:null, gross:67.4, net:3.5, sssg:'11.6%', stores:3069, turnover:null, avgSpend:null },
-    { name:'Zensho', cat:'综合餐饮', region:'JP', currency:'JPY', revenue:11366.8, revGrowth:null, profit:751.3, profGrowth:null, gross:54.7, net:6.6, sssg:null, stores:15419, turnover:null, avgSpend:null },
-    { name:'比格披萨', cat:'其他', region:'CN', currency:'CNY', revenue:13.89, revGrowth:21.1, profit:0.52, profGrowth:null, gross:50.9, net:3.7, sssg:null, stores:342, turnover:null, avgSpend:null },
-    { name:'老乡鸡', cat:'综合餐饮', region:'CN', currency:'CNY', revenue:62.88, revGrowth:11.3, profit:4.09, profGrowth:null, gross:22.8, net:6.5, sssg:null, stores:null, turnover:null, avgSpend:null },
-    { name:'袁记水饺', cat:'综合餐饮', region:'CN', currency:'CNY', revenue:25.61, revGrowth:26.4, profit:1.42, profGrowth:null, gross:23.0, net:5.5, sssg:null, stores:null, turnover:null, avgSpend:null },
-    { name:'幻师commune', cat:'综合餐饮', region:'CN', currency:'CNY', revenue:10.74, revGrowth:27.1, profit:0.54, profGrowth:null, gross:32.2, net:5.0, sssg:'1.9%', stores:null, turnover:null, avgSpend:null },
-    { name:'巴奴', cat:'火锅', region:'CN', currency:'CNY', revenue:null, revGrowth:null, profit:null, profGrowth:null, gross:null, net:null, sssg:'4.3%', stores:144, turnover:null, avgSpend:null }
-  ]
-};
+let allBrands = [];
+let currentView = null;
 
-const periodLabels = { 'H1':'2025年H1（半年报）', 'FY':'2025全年' };
-
-let currentPeriod = 'H1';
-let currentRegion = 'ALL';
-let currentCategory = '全部';
-let currentSort = 'revenue_desc';
-let charts = {};
-
-function init() {
-  renderRegionBar();
-  renderCategoryBar();
-  renderPeriodTabs();
-  document.getElementById('sortSelect').addEventListener('change', e => { currentSort = e.target.value; render(); });
-  document.querySelectorAll('.view-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('cardView').classList.toggle('show', btn.dataset.view === 'card');
-      document.getElementById('tableView').classList.toggle('show', btn.dataset.view === 'table');
-    });
-  });
-  render();
+function classifyPeriod(p) {
+  if (/^\d{4}$/.test(p)) return 'FY';
+  if (/^FY\d{4}$/i.test(p)) return 'FY';
+  if (/fiscal/i.test(p)) return 'FY';
+  if (/累计.*Q1/i.test(p) || /Q1/i.test(p)) return 'Q1';
+  if (/累计.*Q2/i.test(p) || /Q2/i.test(p)) return 'Q2';
+  if (/累计.*Q3/i.test(p) || /Q3/i.test(p)) return 'Q3';
+  if (/累计.*Q4/i.test(p) || /Q4/i.test(p)) return 'Q4';
+  if (/H1/i.test(p)) return 'H1';
+  if (/H2/i.test(p)) return 'H2';
+  return 'FY';
 }
 
-function renderRegionBar() {
-  const bar = document.getElementById('regionBar');
-  bar.innerHTML = '<span class="label">地区：</span>';
-  Object.entries(regionNames).forEach(([key, label]) => {
-    const btn = document.createElement('button');
-    btn.className = 'cat-pill' + (key === currentRegion ? ' active' : '');
-    btn.textContent = label;
-    btn.onclick = () => { currentRegion = key; bar.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); render(); };
-    bar.appendChild(btn);
-  });
+function filterPeriods(periods, filter) {
+  if (filter === 'ALL') return periods;
+  return periods.filter(p => classifyPeriod(p) === filter);
 }
 
-function renderCategoryBar() {
-  const bar = document.getElementById('categoryBar');
-  bar.innerHTML = '<span class="label">类别：</span>';
-  catNames.forEach(cat => {
-    const btn = document.createElement('button');
-    btn.className = 'cat-pill' + (cat === currentCategory ? ' active' : '');
-    btn.textContent = cat;
-    btn.onclick = () => { currentCategory = cat; bar.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); render(); };
-    bar.appendChild(btn);
-  });
+function formatNum(v) {
+  if (v === null || v === undefined || v === '') return '-';
+  if (typeof v === 'string') {
+    if (v.includes('%')) return v;
+    const n = parseFloat(v);
+    if (isNaN(n)) return v;
+    return n.toLocaleString('en-US', {maximumFractionDigits:2});
+  }
+  if (typeof v === 'number') {
+    return v.toLocaleString('en-US', {maximumFractionDigits:2});
+  }
+  return String(v);
 }
 
-function renderPeriodTabs() {
-  const tabs = document.getElementById('periodTabs');
-  tabs.innerHTML = '';
-  Object.entries(periodLabels).forEach(([key, label]) => {
-    const btn = document.createElement('button');
-    btn.className = 'tab' + (key === currentPeriod ? ' active' : '');
-    btn.textContent = label;
-    btn.onclick = () => { currentPeriod = key; document.querySelectorAll('.tab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); render(); };
-    tabs.appendChild(btn);
-  });
+function buildApp() {
+  const app = document.getElementById('app');
+  app.innerHTML = `
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h1>全球餐饮看板</h1>
+        <p>可比上市公司经营数据</p>
+      </div>
+      <div class="sidebar-nav" id="sidebarNav"></div>
+    </div>
+    <div class="main" id="mainContent"></div>
+  `;
+  buildSidebar();
+  showCountrySummary('CN');
 }
 
-function getFiltered() {
-  let items = [...(data[currentPeriod] || [])];
-  if (currentRegion !== 'ALL') items = items.filter(d => d.region === currentRegion);
-  if (currentCategory !== '全部') items = items.filter(d => d.cat === currentCategory);
-  const [field, dir] = currentSort.split('_');
-  const key = field === 'revenue' ? 'revenue' : field === 'profit' ? 'profit' : 'net';
-  items.sort((a, b) => dir === 'desc' ? (b[key]||0) - (a[key]||0) : (a[key]||0) - (b[key]||0));
-  return items;
-}
-
-function fmtPct(v) { return v == null ? '—' : v.toFixed(1) + '%'; }
-function fmtNum(v) { return v == null ? '—' : v.toFixed(2); }
-function fmtGrowth(v) {
-  if (v == null) return '<span class="na">—</span>';
-  const s = v.toFixed(1) + '%';
-  if (v > 0) return '<span class="up">+' + s + '</span>';
-  if (v < 0) return '<span class="down">' + s + '</span>';
-  return '<span class="na">' + s + '</span>';
-}
-function currUnit(c) {
-  return currencyLabels[c] || '亿元';
-}
-
-function render() {
-  const items = getFiltered();
-  renderKPIs(items);
-  renderCards(items);
-  renderTable(items);
-  renderCharts(items);
-}
-
-function renderKPIs(items) {
-  const row = document.getElementById('kpiRow');
-  const cnItems = items.filter(d => d.currency === 'CNY');
-  const totalRev = cnItems.reduce((s, d) => s + (d.revenue || 0), 0);
-  const totalProfit = cnItems.reduce((s, d) => s + (d.profit || 0), 0);
-  const avgGross = items.filter(d => d.gross != null);
-  const avgNet = items.filter(d => d.net != null);
-  const gv = avgGross.length ? avgGross.reduce((s,d) => s + d.gross, 0) / avgGross.length : 0;
-  const nv = avgNet.length ? avgNet.reduce((s,d) => s + d.net, 0) / avgNet.length : 0;
-  row.innerHTML =
-    '<div class="kpi-card"><div class="label">公司数量</div><div class="value">' + items.length + '</div></div>' +
-    '<div class="kpi-card"><div class="label">中国公司总营收（亿元）</div><div class="value">' + totalRev.toFixed(1) + '</div></div>' +
-    '<div class="kpi-card"><div class="label">中国公司总利润（亿元）</div><div class="value" style="color:' + (totalProfit>=0?'var(--green)':'var(--red)') + '">' + totalProfit.toFixed(1) + '</div></div>' +
-    '<div class="kpi-card"><div class="label">平均毛利率</div><div class="value">' + gv.toFixed(1) + '%</div></div>' +
-    '<div class="kpi-card"><div class="label">平均净利率</div><div class="value">' + nv.toFixed(1) + '%</div></div>';
-}
-
-function renderCards(items) {
-  const grid = document.getElementById('companyGrid');
-  grid.innerHTML = items.map(d => {
-    const u = d.currency === 'CNY' ? '亿元' : d.currency === 'USD' ? '百万$' : '亿¥';
-    return '<div class="company-card">' +
-      '<div class="name">' + d.name +
-        ' <span class="tag">' + d.cat + '</span>' +
-        ' <span class="region-tag region-' + d.region + '">' + regionNames[d.region] + '</span>' +
-      '</div>' +
-      '<div class="metrics">' +
-        '<div class="metric"><div class="mlabel">营收（' + u + '）</div><div class="mval">' + fmtNum(d.revenue) + ' ' + fmtGrowth(d.revGrowth) + '</div></div>' +
-        '<div class="metric"><div class="mlabel">净利润（' + u + '）</div><div class="mval" style="color:' + (d.profit!=null&&d.profit<0?'var(--red)':'var(--text)') + '">' + fmtNum(d.profit) + ' ' + fmtGrowth(d.profGrowth) + '</div></div>' +
-        '<div class="metric"><div class="mlabel">毛利率</div><div class="mval">' + fmtPct(d.gross) + '</div></div>' +
-        '<div class="metric"><div class="mlabel">净利率</div><div class="mval" style="color:' + (d.net!=null&&d.net<0?'var(--red)':'var(--text)') + '">' + fmtPct(d.net) + '</div></div>' +
-        '<div class="metric"><div class="mlabel">门店</div><div class="mval">' + (d.stores != null ? d.stores.toLocaleString() : '—') + '</div></div>' +
-        '<div class="metric"><div class="mlabel">翻台/人均</div><div class="mval">' + (d.turnover != null ? d.turnover + '次' : '—') + (d.avgSpend != null ? '/' + d.avgSpend + '元' : '') + '</div></div>' +
-      '</div>' +
-      (d.sssg ? '<div class="sssg-row"><div class="mlabel">同店增长</div><div class="sssg-text">' + d.sssg + '</div></div>' : '') +
-    '</div>';
-  }).join('');
-}
-
-function renderTable(items) {
-  const table = document.getElementById('dataTable');
-  table.innerHTML =
-    '<thead><tr><th>公司</th><th>地区</th><th>类别</th><th>币种</th><th>营收</th><th>营收增速</th><th>净利润</th><th>利润增速</th><th>毛利率</th><th>净利率</th><th>门店</th><th>翻台率</th><th>人均</th><th>同店增长</th></tr></thead>' +
-    '<tbody>' + items.map(d =>
-      '<tr>' +
-        '<td style="font-weight:600">' + d.name + '</td>' +
-        '<td>' + regionNames[d.region] + '</td>' +
-        '<td>' + d.cat + '</td>' +
-        '<td>' + d.currency + '</td>' +
-        '<td>' + fmtNum(d.revenue) + '</td>' +
-        '<td>' + fmtGrowth(d.revGrowth) + '</td>' +
-        '<td style="color:' + (d.profit!=null&&d.profit<0?'var(--red)':'var(--text)') + '">' + fmtNum(d.profit) + '</td>' +
-        '<td>' + fmtGrowth(d.profGrowth) + '</td>' +
-        '<td>' + fmtPct(d.gross) + '</td>' +
-        '<td style="color:' + (d.net!=null&&d.net<0?'var(--red)':'var(--text)') + '">' + fmtPct(d.net) + '</td>' +
-        '<td>' + (d.stores != null ? d.stores.toLocaleString() : '—') + '</td>' +
-        '<td>' + (d.turnover != null ? d.turnover : '—') + '</td>' +
-        '<td>' + (d.avgSpend != null ? d.avgSpend : '—') + '</td>' +
-        '<td style="font-size:0.78rem;text-align:left">' + (d.sssg || '—') + '</td>' +
-      '</tr>'
-    ).join('') + '</tbody>';
-}
-
-function renderCharts(items) {
-  const colors = ['#6366f1','#818cf8','#a78bfa','#c084fc','#e879f9','#f472b6','#fb7185',
-    '#f59e0b','#22c55e','#06b6d4','#3b82f6','#8b5cf6','#ec4899','#14b8a6','#eab308','#f97316','#84cc16','#64748b',
-    '#a3e635','#fbbf24','#38bdf8','#fb923c','#f87171','#34d399','#a78bfa','#818cf8'];
-  // Only chart items with data, limit to top 25 for readability
-  const chartItems = items.filter(d => d.revenue != null || d.profit != null).slice(0, 25);
-  const labels = chartItems.map(d => d.name);
-  const bgColors = chartItems.map((_, i) => colors[i % colors.length]);
-
-  const opts = (unit) => ({
-    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.x != null ? ctx.parsed.x.toFixed(2) + (unit||'') : '' } } },
-    scales: {
-      x: { grid: { color: '#2a2e45' }, ticks: { color: '#8b8fa3', font: { size: 11 } } },
-      y: { grid: { display: false }, ticks: { color: '#e4e6f0', font: { size: 11 } } }
+function buildSidebar() {
+  const nav = document.getElementById('sidebarNav');
+  let html = '';
+  for (const country of COUNTRY_ORDER) {
+    const brands = allBrands.filter(b => b.country === country);
+    if (brands.length === 0) continue;
+    html += '<div class="nav-group">';
+    html += '<div class="nav-group-title"><span class="flag">'+COUNTRY_FLAGS[country]+'</span> '+COUNTRY_NAMES[country]+'('+brands.length+')</div>';
+    html += '<div class="nav-summary" data-country="'+country+'" onclick="showCountrySummary(\''+country+'\')">📊 '+COUNTRY_NAMES[country]+'汇总</div>';
+    for (const b of brands) {
+      const idx = allBrands.indexOf(b);
+      html += '<div class="nav-item" data-brand="'+idx+'" onclick="showBrand('+idx+')">'+b.brand_name+'<span class="cat-tag">'+b.category+'</span></div>';
     }
-  });
-
-  const h = Math.max(300, chartItems.length * 32);
-  document.querySelectorAll('.chart-box canvas').forEach(c => { c.parentElement.style.height = h + 'px'; });
-  ['chartRevenue','chartProfit','chartGross','chartNet'].forEach(id => { if (charts[id]) charts[id].destroy(); });
-
-  charts.chartRevenue = new Chart(document.getElementById('chartRevenue'), {
-    type:'bar', data:{ labels, datasets:[{ data:chartItems.map(d=>d.revenue), backgroundColor:bgColors, borderRadius:4 }] }, options:opts()
-  });
-  charts.chartProfit = new Chart(document.getElementById('chartProfit'), {
-    type:'bar', data:{ labels, datasets:[{ data:chartItems.map(d=>d.profit), backgroundColor:chartItems.map((d,i)=>d.profit<0?'#ef4444':bgColors[i]), borderRadius:4 }] }, options:opts()
-  });
-  charts.chartGross = new Chart(document.getElementById('chartGross'), {
-    type:'bar', data:{ labels, datasets:[{ data:chartItems.map(d=>d.gross!=null?d.gross:0), backgroundColor:bgColors, borderRadius:4 }] }, options:opts('%')
-  });
-  charts.chartNet = new Chart(document.getElementById('chartNet'), {
-    type:'bar', data:{ labels, datasets:[{ data:chartItems.map(d=>d.net!=null?d.net:0), backgroundColor:chartItems.map((d,i)=>d.net<0?'#ef4444':bgColors[i]), borderRadius:4 }] }, options:opts('%')
-  });
+    html += '</div>';
+  }
+  nav.innerHTML = html;
 }
 
+function setActiveNav(selector) {
+  document.querySelectorAll('.nav-item,.nav-summary').forEach(function(el){ el.classList.remove('active'); });
+  var el = document.querySelector(selector);
+  if (el) { el.classList.add('active'); el.scrollIntoView({block:'nearest'}); }
+}
+
+// ========== BRAND DETAIL ==========
+function showBrand(idx) {
+  currentView = {type:'brand', index:idx};
+  setActiveNav('.nav-item[data-brand="'+idx+'"]');
+  var brand = allBrands[idx];
+  var main = document.getElementById('mainContent');
+
+  var periodTypes = {};
+  brand.periods.forEach(function(p){ periodTypes[classifyPeriod(p)] = true; });
+  var filters = ['ALL','FY','Q1','Q2','Q3','Q4','H1','H2'].filter(function(f){ return f==='ALL' || periodTypes[f]; });
+
+  main.innerHTML =
+    '<div class="main-header"><div>' +
+    '<div class="main-title">'+COUNTRY_FLAGS[brand.country]+' '+brand.brand_name+'</div>' +
+    '<div class="main-subtitle">'+COUNTRY_NAMES[brand.country]+' · '+brand.category+' · '+brand.periods.length+'个报告期</div>' +
+    '</div></div>' +
+    '<div class="period-filter" id="periodFilter">' +
+    filters.map(function(f){ return '<button class="period-btn'+(f==='ALL'?' active':'')+'" data-filter="'+f+'" onclick="applyBrandFilter('+idx+',\''+f+'\',this)">'+( f==='ALL'?'全部':f)+'</button>'; }).join('') +
+    '</div>' +
+    '<div id="brandKPI"></div>' +
+    '<div id="brandCharts" class="charts-row"></div>' +
+    '<div class="data-section"><h2>详细数据</h2><div class="table-wrap" id="brandTable"></div></div>';
+
+  applyBrandFilter(idx, 'ALL', document.querySelector('.period-btn'));
+}
+
+function applyBrandFilter(idx, filter, btn) {
+  document.querySelectorAll('#periodFilter .period-btn').forEach(function(b){ b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+
+  var brand = allBrands[idx];
+  var periods = filterPeriods(brand.periods, filter);
+  renderBrandKPI(brand, periods);
+  renderBrandTable(brand, periods);
+  renderBrandCharts(brand, periods);
+}
+
+function findMetric(brand, labels, period) {
+  for (var li=0; li<labels.length; li++) {
+    for (var ri=0; ri<brand.data_rows.length; ri++) {
+      var r = brand.data_rows[ri];
+      if (r.l && r.l.indexOf(labels[li]) >= 0 && !r.s && r.v[period] !== undefined && r.v[period] !== null && r.v[period] !== '') return r.v[period];
+    }
+  }
+  return null;
+}
+
+var REVENUE_LABELS = ['营业收入','总收入','营收','Revenue','Total revenue','Net Revenue','Total Revenue','Revenues','收入合计','总营收'];
+var PROFIT_LABELS = ['净利润','归母净利润','Net income','Net Income','净利','Operating income','利润'];
+var STORE_LABELS = ['门店总数','总计','Total','total','Store count','门店数','餐厅数量'];
+var GROSS_LABELS = ['毛利率','Gross margin','Gross Margin','毛利润率'];
+var NET_LABELS = ['净利率','Net margin','Net Margin','净利润率'];
+
+function renderBrandKPI(brand, periods) {
+  var container = document.getElementById('brandKPI');
+  if (!periods.length) { container.innerHTML = '<div class="kpi-row"><div class="kpi-card"><div class="kpi-label">该筛选条件下无数据</div></div></div>'; return; }
+
+  var latestP = periods[0], prevP = periods[1] || null;
+  var rev = findMetric(brand, REVENUE_LABELS, latestP);
+  var prof = findMetric(brand, PROFIT_LABELS, latestP);
+  var stores = findMetric(brand, STORE_LABELS, latestP);
+  var net = findMetric(brand, NET_LABELS, latestP);
+
+  var revGrowth = null;
+  if (rev !== null && prevP) {
+    var prevRev = findMetric(brand, REVENUE_LABELS, prevP);
+    if (prevRev && prevRev !== 0) revGrowth = ((rev - prevRev)/Math.abs(prevRev)*100).toFixed(1);
+  }
+
+  container.innerHTML = '<div class="kpi-row">' +
+    '<div class="kpi-card"><div class="kpi-label">最新报告期</div><div class="kpi-value" style="color:var(--cyan)">'+latestP+'</div></div>' +
+    '<div class="kpi-card"><div class="kpi-label">营收</div><div class="kpi-value">'+(rev!==null?formatNum(rev):'-')+'</div>' +
+    (revGrowth!==null?'<div class="kpi-change '+(parseFloat(revGrowth)>=0?'up':'down')+'">'+(parseFloat(revGrowth)>=0?'▲':'▼')+' '+Math.abs(revGrowth)+'%</div>':'') + '</div>' +
+    '<div class="kpi-card"><div class="kpi-label">净利润</div><div class="kpi-value">'+(prof!==null?formatNum(prof):'-')+'</div></div>' +
+    '<div class="kpi-card"><div class="kpi-label">门店数</div><div class="kpi-value">'+(stores!==null?formatNum(stores):'-')+'</div></div>' +
+    '<div class="kpi-card"><div class="kpi-label">净利率</div><div class="kpi-value">'+(net!==null?(typeof net==='string'?net:net+'%'):'-')+'</div></div>' +
+    '</div>';
+}
+
+function renderBrandTable(brand, periods) {
+  var container = document.getElementById('brandTable');
+  if (!periods.length) { container.innerHTML = '<p style="padding:20px;color:var(--text-dim)">该筛选条件下无数据</p>'; return; }
+
+  var html = '<table><thead><tr><th>指标</th>';
+  periods.forEach(function(p){ html += '<th>'+p+'</th>'; });
+  html += '</tr></thead><tbody>';
+
+  brand.data_rows.forEach(function(row) {
+    var isSection = row.s;
+    var indent = row.i || 0;
+
+    if (!isSection) {
+      var hasValues = periods.some(function(p){ return row.v[p] !== undefined && row.v[p] !== null && row.v[p] !== ''; });
+      if (!hasValues) return;
+    }
+
+    var cls = '';
+    if (isSection) cls += ' section-row';
+    if (indent >= 2) cls += ' indent-'+Math.min(indent,4);
+
+    html += '<tr class="'+cls+'"><td>'+row.l+'</td>';
+    if (isSection) {
+      html += '<td colspan="'+periods.length+'"></td>';
+    } else {
+      periods.forEach(function(p){
+        html += '<td>'+formatNum(row.v[p])+'</td>';
+      });
+    }
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+var chartInstances = [];
+function destroyCharts() { chartInstances.forEach(function(c){ c.destroy(); }); chartInstances = []; }
+
+function renderBrandCharts(brand, periods) {
+  destroyCharts();
+  var container = document.getElementById('brandCharts');
+  if (periods.length < 2) { container.innerHTML = ''; return; }
+
+  var fyPeriods = periods.filter(function(p){ return /^\d{4}$/.test(p) || /^FY\d{4}$/i.test(p); }).slice().reverse();
+  var chartPeriods = fyPeriods.length >= 2 ? fyPeriods : periods.slice().reverse().slice(0,8);
+
+  function getTimeSeries(labels) {
+    for (var li=0;li<labels.length;li++) {
+      for (var ri=0;ri<brand.data_rows.length;ri++) {
+        var r = brand.data_rows[ri];
+        if (r.l && r.l.indexOf(labels[li])>=0 && !r.s) {
+          var vals = chartPeriods.map(function(p){ var v=r.v[p]; return (v!==undefined&&v!==null&&v!==''&&typeof v==='number')?v:null; });
+          if (vals.some(function(v){return v!==null;})) return vals;
+        }
+      }
+    }
+    return null;
+  }
+
+  var revVals = getTimeSeries(REVENUE_LABELS);
+  var profVals = getTimeSeries(PROFIT_LABELS);
+  if (!revVals && !profVals) { container.innerHTML = ''; return; }
+
+  var chartHtml = '';
+  if (revVals) chartHtml += '<div class="chart-box"><h3>营收趋势</h3><canvas id="revChart"></canvas></div>';
+  if (profVals) chartHtml += '<div class="chart-box"><h3>利润趋势</h3><canvas id="profChart"></canvas></div>';
+  container.innerHTML = chartHtml;
+
+  var chartOpts = {
+    responsive:true,
+    plugins:{legend:{display:false}},
+    scales:{
+      x:{ticks:{color:'#8b8fa3',font:{size:10}},grid:{color:'#2a2e45'}},
+      y:{ticks:{color:'#8b8fa3',font:{size:10}},grid:{color:'#2a2e45'}}
+    }
+  };
+
+  if (revVals) {
+    chartInstances.push(new Chart(document.getElementById('revChart'),{
+      type:'bar',data:{labels:chartPeriods,datasets:[{data:revVals,backgroundColor:'rgba(99,102,241,.6)',borderColor:'#6366f1',borderWidth:1,borderRadius:4}]},options:chartOpts
+    }));
+  }
+  if (profVals) {
+    chartInstances.push(new Chart(document.getElementById('profChart'),{
+      type:'line',data:{labels:chartPeriods,datasets:[{data:profVals,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.1)',fill:true,tension:.3,pointRadius:4}]},options:chartOpts
+    }));
+  }
+}
+
+// ========== COUNTRY SUMMARY ==========
+function showCountrySummary(country) {
+  currentView = {type:'summary', country:country};
+  setActiveNav('.nav-summary[data-country="'+country+'"]');
+  var brands = allBrands.filter(function(b){ return b.country === country; });
+  var main = document.getElementById('mainContent');
+
+  main.innerHTML =
+    '<div class="main-header"><div>' +
+    '<div class="main-title">'+COUNTRY_FLAGS[country]+' '+COUNTRY_NAMES[country]+'餐饮公司汇总</div>' +
+    '<div class="main-subtitle">'+brands.length+'家公司</div></div></div>' +
+    '<div class="period-filter" id="summaryFilter">' +
+    ['ALL','FY','Q1','Q2','Q3','Q4','H1'].map(function(f){
+      return '<button class="period-btn'+(f==='ALL'?' active':'')+'" onclick="applySummaryFilter(\''+country+'\',\''+f+'\',this)">'+(f==='ALL'?'全部':f)+'</button>';
+    }).join('') +
+    '</div><div id="summaryContent"></div>';
+
+  applySummaryFilter(country, 'ALL', document.querySelector('#summaryFilter .period-btn'));
+}
+
+function applySummaryFilter(country, filter, btn) {
+  document.querySelectorAll('#summaryFilter .period-btn').forEach(function(b){ b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  renderSummaryContent(country, filter);
+}
+
+function renderSummaryContent(country, filter) {
+  var brands = allBrands.filter(function(b){ return b.country === country; });
+  var container = document.getElementById('summaryContent');
+  destroyCharts();
+
+  var brandData = brands.map(function(b){
+    var periods = filterPeriods(b.periods, filter);
+    var latestP = periods[0] || null;
+    var prevP = periods[1] || null;
+    var rev=null, prof=null, stores=null, gross=null, net=null, revGrowth=null;
+    if (latestP) {
+      rev = findMetric(b, REVENUE_LABELS, latestP);
+      prof = findMetric(b, PROFIT_LABELS, latestP);
+      stores = findMetric(b, STORE_LABELS, latestP);
+      gross = findMetric(b, GROSS_LABELS, latestP);
+      net = findMetric(b, NET_LABELS, latestP);
+    }
+    if (rev !== null && prevP) {
+      var prevRev = findMetric(b, REVENUE_LABELS, prevP);
+      if (prevRev && prevRev !== 0) revGrowth = ((rev-prevRev)/Math.abs(prevRev)*100).toFixed(1);
+    }
+    return {brand:b, latestP:latestP, rev:rev, prof:prof, stores:stores, gross:gross, net:net, revGrowth:revGrowth, idx:allBrands.indexOf(b), periodCount:periods.length};
+  });
+
+  // Cards
+  var html = '<div class="summary-grid">';
+  brandData.forEach(function(d){
+    html += '<div class="summary-card" onclick="showBrand('+d.idx+')">' +
+      '<div class="sc-name">'+d.brand.brand_name+'</div>' +
+      '<div class="sc-cat">'+d.brand.category+(d.latestP?' · '+d.latestP:'')+'</div>' +
+      '<div class="sc-metrics">' +
+      '<div class="sc-m"><div class="sc-ml">营收</div><div class="sc-mv">'+(d.rev!==null?formatNum(d.rev):'-')+'</div>' +
+      (d.revGrowth!==null?'<div style="font-size:0.68rem" class="'+(parseFloat(d.revGrowth)>=0?'up':'down')+'">'+(parseFloat(d.revGrowth)>=0?'▲':'▼')+Math.abs(d.revGrowth)+'%</div>':'') + '</div>' +
+      '<div class="sc-m"><div class="sc-ml">净利润</div><div class="sc-mv">'+(d.prof!==null?formatNum(d.prof):'-')+'</div></div>' +
+      '<div class="sc-m"><div class="sc-ml">门店数</div><div class="sc-mv">'+(d.stores!==null?formatNum(d.stores):'-')+'</div></div>' +
+      '<div class="sc-m"><div class="sc-ml">毛利率</div><div class="sc-mv">'+(d.gross!==null?(typeof d.gross==='string'?d.gross:d.gross+'%'):'-')+'</div></div>' +
+      '<div class="sc-m"><div class="sc-ml">净利率</div><div class="sc-mv">'+(d.net!==null?(typeof d.net==='string'?d.net:d.net+'%'):'-')+'</div></div>' +
+      '<div class="sc-m"><div class="sc-ml">报告期数</div><div class="sc-mv">'+d.periodCount+'</div></div>' +
+      '</div></div>';
+  });
+  html += '</div>';
+
+  // Comparison table
+  html += '<div class="data-section"><h2>横向对比</h2><div class="table-wrap"><table>' +
+    '<thead><tr><th>品牌</th><th>品类</th><th>最新期</th><th>营收</th><th>营收增长</th><th>净利润</th><th>门店数</th><th>毛利率</th><th>净利率</th></tr></thead><tbody>';
+  brandData.forEach(function(d){
+    html += '<tr style="cursor:pointer" onclick="showBrand('+d.idx+')">' +
+      '<td>'+d.brand.brand_name+'</td><td>'+d.brand.category+'</td><td>'+(d.latestP||'-')+'</td>' +
+      '<td>'+(d.rev!==null?formatNum(d.rev):'-')+'</td>' +
+      '<td class="'+(d.revGrowth!==null?(parseFloat(d.revGrowth)>=0?'up':'down'):'na')+'">'+(d.revGrowth!==null?d.revGrowth+'%':'-')+'</td>' +
+      '<td>'+(d.prof!==null?formatNum(d.prof):'-')+'</td>' +
+      '<td>'+(d.stores!==null?formatNum(d.stores):'-')+'</td>' +
+      '<td>'+(d.gross!==null?(typeof d.gross==='string'?d.gross:d.gross+'%'):'-')+'</td>' +
+      '<td>'+(d.net!==null?(typeof d.net==='string'?d.net:d.net+'%'):'-')+'</td>' +
+      '</tr>';
+  });
+  html += '</tbody></table></div></div>';
+
+  // Charts
+  var withRev = brandData.filter(function(d){ return d.rev!==null && typeof d.rev==='number'; });
+  if (withRev.length > 0) {
+    html += '<div class="charts-row">' +
+      '<div class="chart-box"><h3>营收对比</h3><canvas id="summaryRevChart"></canvas></div>' +
+      '<div class="chart-box"><h3>净利率对比</h3><canvas id="summaryMarginChart"></canvas></div></div>';
+  }
+
+  container.innerHTML = html;
+
+  if (withRev.length > 0) {
+    var sorted = withRev.slice().sort(function(a,b){ return (b.rev||0)-(a.rev||0); });
+    chartInstances.push(new Chart(document.getElementById('summaryRevChart'),{
+      type:'bar',data:{
+        labels:sorted.map(function(d){return d.brand.brand_name;}),
+        datasets:[{data:sorted.map(function(d){return d.rev;}),backgroundColor:'rgba(99,102,241,.6)',borderRadius:4}]
+      },options:{
+        responsive:true,indexAxis:'y',
+        plugins:{legend:{display:false}},
+        scales:{x:{ticks:{color:'#8b8fa3'},grid:{color:'#2a2e45'}},y:{ticks:{color:'#8b8fa3',font:{size:10}},grid:{display:false}}}
+      }
+    }));
+
+    var withMargin = brandData.filter(function(d){ return d.net!==null && typeof d.net==='number'; });
+    if (withMargin.length > 0) {
+      var msorted = withMargin.slice().sort(function(a,b){ return (b.net||0)-(a.net||0); });
+      chartInstances.push(new Chart(document.getElementById('summaryMarginChart'),{
+        type:'bar',data:{
+          labels:msorted.map(function(d){return d.brand.brand_name;}),
+          datasets:[{data:msorted.map(function(d){return d.net;}),backgroundColor:msorted.map(function(d){return (d.net||0)>=0?'rgba(34,197,94,.6)':'rgba(239,68,68,.6)';}),borderRadius:4}]
+        },options:{
+          responsive:true,indexAxis:'y',
+          plugins:{legend:{display:false}},
+          scales:{x:{ticks:{color:'#8b8fa3',callback:function(v){return v+'%';}},grid:{color:'#2a2e45'}},y:{ticks:{color:'#8b8fa3',font:{size:10}},grid:{display:false}}}
+        }
+      }));
+    }
+  }
+}
+
+// ========== INIT ==========
+async function init() {
+  try {
+    var resp = await fetch(DATA_URL);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    allBrands = await resp.json();
+    buildApp();
+  } catch(e) {
+    document.getElementById('app').innerHTML = '<div class="loading"><div style="color:var(--red)">Loading failed: '+e.message+'</div><div style="color:var(--text-dim);font-size:0.8rem">Please check network connection</div></div>';
+  }
+}
 init();
 </script>
 </body>
