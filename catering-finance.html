@@ -116,7 +116,7 @@
     font-size: 0.65rem; padding: 2px 8px; border-radius: 10px;
     background: rgba(99,102,241,.15); color: var(--accent2);
   }
-  .company-card .metrics { margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .company-card .metrics { margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
   .metric .mlabel { font-size: 0.75rem; color: var(--text-dim); }
   .metric .mval { font-size: 1.05rem; font-weight: 600; }
   .metric .mchange { font-size: 0.75rem; margin-left: 4px; }
@@ -238,34 +238,42 @@ const categories = {
 
 const data = {
   'H1': [
-    { name:'海底捞', cat:'火锅', revenue:193.33, revGrowth:-0.060, profit:23.54, profGrowth:-0.103, gross:0.683, net:0.12174, sssg:'-9.9%' },
-    { name:'百胜中国', cat:'综合餐饮', revenue:412.91, revGrowth:0.028, profit:39.09, profGrowth:0.025, gross:0.689, net:0.09466, sssg:'集团：持平\nKFC：持平\n必胜客：+1%' },
-    { name:'遇见小面', cat:'综合餐饮', revenue:7.03, revGrowth:0.338, profit:0.42, profGrowth:0.958, gross:0.686, net:0.05949, sssg:'-3.1%' },
-    { name:'九毛九', cat:'综合餐饮', revenue:27.53, revGrowth:-0.103, profit:0.59, profGrowth:-0.136, gross:0.644, net:0.02132, sssg:'太二：-13.7%\n怂火锅：-14.3%\n九毛九：-18.5%' },
-    { name:'呷哺呷哺', cat:'火锅', revenue:19.42, revGrowth:-0.192, profit:-0.81, profGrowth:-0.705, gross:0.670, net:-0.04161, sssg:'呷哺呷哺：-15.6%\n凑凑：-14%' },
-    { name:'绿茶', cat:'综合餐饮', revenue:22.90, revGrowth:0.232, profit:2.34, profGrowth:0.341, gross:0.697, net:0.10212, sssg:'-1.7%' },
-    { name:'达势股份', cat:'西式快餐', revenue:25.93, revGrowth:0.270, profit:0.66, profGrowth:5.044, gross:0.727, net:0.025, sssg:'-1.0%' },
-    { name:'小菜园', cat:'综合餐饮', revenue:27.14, revGrowth:0.065, profit:3.82, profGrowth:0.357, gross:0.705, net:0.14092, sssg:'-7.2%' },
-    { name:'瑞幸', cat:'咖啡茶饮', revenue:212.24, revGrowth:0.446, profit:17.76, profGrowth:1.254, gross:0.615, net:0.08366, sssg:'自营Q1: +8.1%\n自营Q2: +13.4%' },
-    { name:'蜜雪冰城', cat:'咖啡茶饮', revenue:148.75, revGrowth:0.393, profit:27.18, profGrowth:0.441, gross:0.316, net:0.18274, sssg:null },
-    { name:'奈雪的茶', cat:'咖啡茶饮', revenue:21.78, revGrowth:-0.144, profit:-1.19, profGrowth:-0.729, gross:0.659, net:-0.05478, sssg:'直营: +2.3%' },
-    { name:'霸王茶姬', cat:'咖啡茶饮', revenue:67.25, revGrowth:0.216, profit:7.55, profGrowth:-0.383, gross:0.535, net:0.11221, sssg:'Q1: -18.9%\nQ2: -23.0%' },
-    { name:'沪上阿姨', cat:'咖啡茶饮', revenue:18.18, revGrowth:0.097, profit:2.03, profGrowth:0.209, gross:0.314, net:0.11158, sssg:null },
-    { name:'茶百道', cat:'咖啡茶饮', revenue:25.00, revGrowth:0.043, profit:3.33, profGrowth:0.395, gross:0.326, net:0.13319, sssg:null },
-    { name:'古茗', cat:'咖啡茶饮', revenue:56.63, revGrowth:0.412, profit:16.26, profGrowth:1.198, gross:0.315, net:0.28721, sssg:null },
+    { name:'海底捞', cat:'火锅', revenue:193.33, revGrowth:-0.060, profit:23.54, profGrowth:-0.103, gross:0.683, net:0.12174, sssg:'-9.9%', stores:null, turnover:null, avgSpend:null },
+    { name:'百胜中国', cat:'综合餐饮', revenue:412.91, revGrowth:0.028, profit:39.09, profGrowth:0.025, gross:0.689, net:0.09466, sssg:'集团：持平\nKFC：持平\n必胜客：+1%', stores:16978, turnover:null, avgSpend:null },
+    { name:'遇见小面', cat:'综合餐饮', revenue:7.03, revGrowth:0.338, profit:0.42, profGrowth:0.958, gross:0.686, net:0.05949, sssg:'-3.1%', stores:417, turnover:3.4, avgSpend:31.8 },
+    { name:'九毛九', cat:'综合餐饮', revenue:27.53, revGrowth:-0.103, profit:0.59, profGrowth:-0.136, gross:0.644, net:0.02132, sssg:'太二：-13.7%\n怂火锅：-14.3%\n九毛九：-18.5%', stores:729, turnover:3.1, avgSpend:74 },
+    { name:'呷哺呷哺', cat:'火锅', revenue:19.42, revGrowth:-0.192, profit:-0.81, profGrowth:-0.705, gross:0.670, net:-0.04161, sssg:'呷哺呷哺：-15.6%\n凑凑：-14%', stores:937, turnover:2.6, avgSpend:53.7 },
+    { name:'绿茶', cat:'综合餐饮', revenue:22.90, revGrowth:0.232, profit:2.34, profGrowth:0.341, gross:0.697, net:0.10212, sssg:'-1.7%', stores:502, turnover:3.1, avgSpend:55.5 },
+    { name:'达势股份', cat:'西式快餐', revenue:25.93, revGrowth:0.270, profit:0.66, profGrowth:5.044, gross:0.727, net:0.025, sssg:'-1.0%', stores:null, turnover:null, avgSpend:null },
+    { name:'小菜园', cat:'综合餐饮', revenue:27.14, revGrowth:0.065, profit:3.82, profGrowth:0.357, gross:0.705, net:0.14092, sssg:'-7.2%', stores:672, turnover:3.1, avgSpend:57.1 },
+    { name:'瑞幸', cat:'咖啡茶饮', revenue:212.24, revGrowth:0.446, profit:17.76, profGrowth:1.254, gross:0.615, net:0.08366, sssg:'自营Q1: +8.1%\n自营Q2: +13.4%', stores:26206, turnover:null, avgSpend:null },
+    { name:'蜜雪冰城', cat:'咖啡茶饮', revenue:148.75, revGrowth:0.393, profit:27.18, profGrowth:0.441, gross:0.316, net:0.18274, sssg:null, stores:null, turnover:null, avgSpend:null },
+    { name:'奈雪的茶', cat:'咖啡茶饮', revenue:21.78, revGrowth:-0.144, profit:-1.19, profGrowth:-0.729, gross:0.659, net:-0.05478, sssg:'直营: +2.3%', stores:null, turnover:null, avgSpend:null },
+    { name:'霸王茶姬', cat:'咖啡茶饮', revenue:67.25, revGrowth:0.216, profit:7.55, profGrowth:-0.383, gross:0.535, net:0.11221, sssg:'Q1: -18.9%\nQ2: -23.0%', stores:null, turnover:null, avgSpend:null },
+    { name:'沪上阿姨', cat:'咖啡茶饮', revenue:18.18, revGrowth:0.097, profit:2.03, profGrowth:0.209, gross:0.314, net:0.11158, sssg:null, stores:null, turnover:null, avgSpend:null },
+    { name:'茶百道', cat:'咖啡茶饮', revenue:25.00, revGrowth:0.043, profit:3.33, profGrowth:0.395, gross:0.326, net:0.13319, sssg:null, stores:null, turnover:null, avgSpend:null },
+    { name:'古茗', cat:'咖啡茶饮', revenue:56.63, revGrowth:0.412, profit:16.26, profGrowth:1.198, gross:0.315, net:0.28721, sssg:null, stores:null, turnover:null, avgSpend:null },
   ],
-  'Q3': [
-    { name:'海底捞', cat:'火锅', revenue:295.94, revGrowth:-0.041, profit:38.38, profGrowth:-0.093, gross:0.686, net:0.12969, sssg:null },
-    { name:'百胜中国', cat:'综合餐饮', revenue:637.65, revGrowth:0.045, profit:60.47, profGrowth:0.010, gross:0.688, net:0.09483, sssg:'集团：+1%\nKFC：+1%\n必胜客：+1%' },
-    { name:'巴奴', cat:'火锅', revenue:20.77, revGrowth:0.245, profit:1.56, profGrowth:0.585, gross:0.694, net:0.07519, sssg:'+4.3%' },
-    { name:'幻师commune', cat:'其他', revenue:8.72, revGrowth:0.142, profit:0.67, profGrowth:1.469, gross:0.313, net:0.07649, sssg:'-0.3%' },
-    { name:'瑞幸', cat:'咖啡茶饮', revenue:365.11, revGrowth:0.469, profit:30.82, profGrowth:0.474, gross:0.625, net:0.08442, sssg:'自营Q3: +14.4%' },
-    { name:'霸王茶姬', cat:'咖啡茶饮', revenue:99.33, revGrowth:0.095, profit:11.52, profGrowth:-0.384, gross:0.536, net:0.11602, sssg:'Q3: -27.8%' },
-    { name:'老乡鸡', cat:'综合餐饮', revenue:45.78, revGrowth:null, profit:3.71, profGrowth:null, gross:0.246, net:0.08112, sssg:null },
+  'FY': [
+    { name:'海底捞', cat:'火锅', revenue:432.25, revGrowth:0.011, profit:40.42, profGrowth:-0.140, gross:0.681, net:0.09351, sssg:'-6.7%', stores:null, turnover:null, avgSpend:null },
+    { name:'百胜中国', cat:'综合餐饮', revenue:848.30, revGrowth:0.040, profit:66.89, profGrowth:0.020, gross:0.689, net:0.079, sssg:'KFC +1%; 必胜客 +1%', stores:18101, turnover:null, avgSpend:null },
+    { name:'遇见小面', cat:'综合餐饮', revenue:16.22, revGrowth:0.405, profit:1.06, profGrowth:0.748, gross:0.676, net:0.065, sssg:'+1.0%', stores:360, turnover:3.8, avgSpend:32.1 },
+    { name:'九毛九', cat:'综合餐饮', revenue:52.33, revGrowth:-0.138, profit:0.58, profGrowth:0.043, gross:0.645, net:0.011, sssg:'太二：-11.5%\n怂火锅：-16.5%', stores:644, turnover:3.0, avgSpend:77 },
+    { name:'呷哺呷哺', cat:'火锅', revenue:37.89, revGrowth:-0.203, profit:-2.96, profGrowth:-0.256, gross:0.650, net:-0.07812, sssg:'-9.6%', stores:null, turnover:null, avgSpend:null },
+    { name:'绿茶', cat:'综合餐饮', revenue:47.63, revGrowth:0.241, profit:5.09, profGrowth:0.410, gross:0.683, net:0.10687, sssg:'-0.8%', stores:465, turnover:3.0, avgSpend:56.2 },
+    { name:'达势股份', cat:'西式快餐', revenue:53.82, revGrowth:0.248, profit:1.42, profGrowth:1.571, gross:0.727, net:0.026, sssg:'-1.5%', stores:null, turnover:null, avgSpend:null },
+    { name:'小菜园', cat:'综合餐饮', revenue:53.45, revGrowth:0.026, profit:7.15, profGrowth:0.232, gross:0.704, net:0.13377, sssg:'-9.4%', stores:667, turnover:3.0, avgSpend:59.2 },
+    { name:'瑞幸', cat:'咖啡茶饮', revenue:492.88, revGrowth:0.430, profit:36.05, profGrowth:0.229, gross:0.600, net:0.07314, sssg:'自营店 +7.5%', stores:22340, turnover:null, avgSpend:null },
+    { name:'蜜雪冰城', cat:'咖啡茶饮', revenue:335.60, revGrowth:0.352, profit:59.27, profGrowth:0.270, gross:0.311, net:0.17661, sssg:null, stores:null, turnover:null, avgSpend:null },
+    { name:'奈雪的茶', cat:'咖啡茶饮', revenue:43.31, revGrowth:-0.120, profit:-3.34, profGrowth:null, gross:0.660, net:-0.07712, sssg:'直营 +5.5%', stores:null, turnover:null, avgSpend:null },
+    { name:'霸王茶姬', cat:'咖啡茶饮', revenue:129.10, revGrowth:0.040, profit:19.10, profGrowth:-0.240, gross:0.535, net:0.14795, sssg:'Q4: -25.5%', stores:null, turnover:null, avgSpend:null },
+    { name:'沪上阿姨', cat:'咖啡茶饮', revenue:44.66, revGrowth:0.360, profit:8.21, profGrowth:0.524, gross:0.314, net:0.18383, sssg:null, stores:null, turnover:null, avgSpend:null },
+    { name:'茶百道', cat:'咖啡茶饮', revenue:53.95, revGrowth:0.097, profit:8.21, profGrowth:0.712, gross:0.325, net:0.15218, sssg:null, stores:null, turnover:null, avgSpend:null },
+    { name:'古茗', cat:'咖啡茶饮', revenue:129.14, revGrowth:0.469, profit:31.10, profGrowth:1.083, gross:0.330, net:0.24082, sssg:null, stores:null, turnover:null, avgSpend:null },
   ]
 };
 
-const periodLabels = { 'H1':'2025年H1（半年报）', 'Q3':'2025年Q1-Q3（前三季度）' };
+const periodLabels = { 'H1':'2025年H1（半年报）', 'FY':'2025年Q1-Q4（全年）' };
 
 let currentPeriod = 'H1';
 let currentCategory = '全部';
@@ -380,6 +388,18 @@ function renderCards(items) {
           <div class="mlabel">净利率</div>
           <div class="mval" style="color:${d.net!=null&&d.net<0?'var(--red)':'var(--text)'}">${fmtPct(d.net)}</div>
         </div>
+        <div class="metric">
+          <div class="mlabel">门店数量</div>
+          <div class="mval">${d.stores != null ? d.stores.toLocaleString() : '—'}</div>
+        </div>
+        <div class="metric">
+          <div class="mlabel">翻台率（次/日）</div>
+          <div class="mval">${d.turnover != null ? d.turnover : '—'}</div>
+        </div>
+        <div class="metric">
+          <div class="mlabel">人均消费（元）</div>
+          <div class="mval">${d.avgSpend != null ? d.avgSpend : '—'}</div>
+        </div>
       </div>
       ${d.sssg ? `<div class="sssg-row"><div class="mlabel">同店增长</div><div class="sssg-text">${d.sssg}</div></div>` : ''}
     </div>
@@ -391,7 +411,7 @@ function renderTable(items) {
   table.innerHTML = `
     <thead><tr>
       <th>公司</th><th>类别</th><th>营收（亿）</th><th>营收增速</th>
-      <th>净利润（亿）</th><th>利润增速</th><th>毛利率</th><th>净利率</th><th>同店增长</th>
+      <th>净利润（亿）</th><th>利润增速</th><th>毛利率</th><th>净利率</th><th>门店</th><th>翻台率</th><th>人均消费</th><th>同店增长</th>
     </tr></thead>
     <tbody>${items.map(d => `<tr>
       <td style="font-weight:600">${d.name}</td>
@@ -402,6 +422,9 @@ function renderTable(items) {
       <td>${fmtGrowth(d.profGrowth)}</td>
       <td>${fmtPct(d.gross)}</td>
       <td style="color:${d.net!=null&&d.net<0?'var(--red)':'var(--text)'}">${fmtPct(d.net)}</td>
+      <td>${d.stores != null ? d.stores.toLocaleString() : '—'}</td>
+      <td>${d.turnover != null ? d.turnover : '—'}</td>
+      <td>${d.avgSpend != null ? d.avgSpend : '—'}</td>
       <td style="font-size:0.8rem;white-space:pre-line;text-align:left">${d.sssg || '—'}</td>
     </tr>`).join('')}</tbody>
   `;
